@@ -30,8 +30,8 @@ public class SearchResultPageTest extends BaseTest {
 	@Test(dataProvider = "getProductName")
 	public void doSearch(String productName) {
 		commPage = new CommonsPage(driver);
-		searchresultpage = commPage.doSearch(productName);
-		String searchResultPageHeader = searchresultpage.isSearchResultHeader();
+		searchResultsPage = commPage.doSearch(productName);
+		String searchResultPageHeader = searchResultsPage.isSearchResultHeader();
 		Assert.assertTrue(searchResultPageHeader.contains(productName));
 	}
 
@@ -72,20 +72,20 @@ public class SearchResultPageTest extends BaseTest {
 	public void imagesCountTest(String searchKey, String productName, int productCount) {
 
 		commPage = new CommonsPage(driver);
-		productInfopage = new ProductInfoPage(driver);
-		searchresultpage = commPage.doSearch(searchKey);
-		productInfopage = searchresultpage.selectProductName(productName);
-		Assert.assertEquals(productInfopage.getProductsImagesCount(), productCount);
+		productinfoPage = new ProductInfoPage(driver);
+		searchResultsPage = commPage.doSearch(searchKey);
+		productinfoPage = searchResultsPage.selectProductName(productName);
+		Assert.assertEquals(productinfoPage.getProductsImagesCount(), productCount);
 	}
 
 	@Test
 	public void ProductDesc() {
 
 		commPage = new CommonsPage(driver);
-		productInfopage = new ProductInfoPage(driver);
-		searchresultpage = commPage.doSearch("MacBook");
-		productInfopage = searchresultpage.selectProductName("MacBook Air");
-		String productDescrip = productInfopage.getProductDec();
+		productinfoPage = new ProductInfoPage(driver);
+		searchResultsPage = commPage.doSearch("MacBook");
+		productinfoPage = searchResultsPage.selectProductName("MacBook Air");
+		String productDescrip = productinfoPage.getProductDec();
 		System.out.println("Product descrip :" + productDescrip);
 
 		softAssert.assertTrue(productDescrip != null);
@@ -100,10 +100,10 @@ public class SearchResultPageTest extends BaseTest {
 	@Test
 	public void productDtaTest() {
 		commPage = new CommonsPage(driver);
-		productInfopage = new ProductInfoPage(driver);
-		searchresultpage = commPage.doSearch("MacBook");
-		productInfopage = searchresultpage.selectProductName("MacBook Air");
-		Map<String, String> actProductInfoMap = productInfopage.getProductInfo();
+		productinfoPage = new ProductInfoPage(driver);
+		searchResultsPage = commPage.doSearch("MacBook");
+		productinfoPage = searchResultsPage.selectProductName("MacBook Air");
+		Map<String, String> actProductInfoMap = productinfoPage.getProductInfo();
 		actProductInfoMap.forEach((k, v) -> System.out.println(k + ":" + v));
 
 		softAssert.assertEquals(actProductInfoMap.get("Brand"), "Apple");

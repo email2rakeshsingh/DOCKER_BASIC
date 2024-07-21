@@ -19,7 +19,7 @@ public class AccountPageTest extends BaseTest {
             throw new NullPointerException("The 'userName' or 'password' property is missing in the properties file.");
         }
 
-        accPage = loginPage.doLogin(userName.trim(), password.trim());
+        accPage = login.doLogin(userName.trim(), password.trim());
     }
 
     @Test
@@ -75,8 +75,8 @@ public class AccountPageTest extends BaseTest {
 
     @Test
     public void userLogOutPage() {
-        loginPage = accPage.clickOnLogoutLink();
-        Assert.assertEquals(loginPage.logOutMessageDisplayed(), Constants.USER_LOGOUT_MESSGE);
+        login = accPage.clickOnLogoutLink();
+        Assert.assertEquals(login.logOutMessageDisplayed(), Constants.USER_LOGOUT_MESSGE);
     }
 
 //    @Test

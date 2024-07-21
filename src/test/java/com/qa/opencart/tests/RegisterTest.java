@@ -28,7 +28,7 @@ public class RegisterTest extends BaseTest {
     @Severity(SeverityLevel.CRITICAL)
     @Description("Test to verify that a valid user can register successfully")
 	public void regSetup() {
-		registerPage = loginPage.navigateToRegisterPage();
+		regPage = login.navigateToRegisterPage();
 
 	}
 
@@ -50,6 +50,6 @@ public class RegisterTest extends BaseTest {
 		String email = getRandomEmailID(); // Get random email ID
 		// Assuming registerPage is initialized somewhere in your test setup
 		// and registerUser method returns a boolean indicating success
-		Assert.assertTrue(registerPage.registerUser(firstName, lastName, email, telephone, password, subscribe));
+		Assert.assertTrue(regPage.registerUser(firstName, lastName, email, telephone, password, subscribe));
 	}
 }

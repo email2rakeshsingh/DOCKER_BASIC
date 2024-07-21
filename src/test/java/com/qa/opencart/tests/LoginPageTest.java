@@ -24,53 +24,53 @@ public class LoginPageTest extends BaseTest {
     @Description("Test to verify that a valid user can log in successfully")
 	@Test
 	public void verifyLoginPageTitle() {
-		String actualTitle = loginPage.getPageTitle();
+		String actualTitle = login.getPageTitle();
 		Assert.assertEquals(actualTitle, Constants.LOGIN_PAGE_TITLE, "Login page title doesn't match expected.");
 	}
   
 	@Test
 	public void verifyFailTest() {
-		 loginPage.getPageTitle();
+		 login.getPageTitle();
 		String actualTitle = "Rakesh";
 		Assert.assertEquals(actualTitle, "Opencart", "Login page title doesn't match expected.");
 	}
 
 	@Test
 	public void verifyLoginPageUrl() {
-		String pageUrl = loginPage.getPageUrl();
+		String pageUrl = login.getPageUrl();
 		Assert.assertTrue(pageUrl.contains(Constants.LOGIN_PAGE_URLS_FRACTION),
 				"Current URL doesn't contain expected URL fraction.");
 	}
 
 	@Test
 	public void verifySearchBoxIsPresent() {
-		Assert.assertTrue(loginPage.isSearchBoxPresent(), "Search box is not present on the login page.");
+		Assert.assertTrue(login.isSearchBoxPresent(), "Search box is not present on the login page.");
 	}
 
 	@Test
 	public void verifyLoginLinkIsPresent() {
-		Assert.assertTrue(loginPage.isLoginLinkPresent(), "Login link is not present on the login page.");
+		Assert.assertTrue(login.isLoginLinkPresent(), "Login link is not present on the login page.");
 	}
 
 	@Test
 	public void verifyEmailAddressFieldIsPresent() {
-		Assert.assertTrue(loginPage.isEmailAddressPresent(), "Email address field is not present on the login page.");
+		Assert.assertTrue(login.isEmailAddressPresent(), "Email address field is not present on the login page.");
 	}
 
 	@Test
 	
 	public void verifyRegisterFieldIsPresent() {
-		Assert.assertTrue(loginPage.isRagisterLinkPresent(), "Password field is not present on the login page.");
+		Assert.assertTrue(login.isRagisterLinkPresent(), "Password field is not present on the login page.");
 	}
 
 	@Test
 	public void verifyPasswordFieldIsPresent() {
-		Assert.assertTrue(loginPage.isPasswordPresent(), "Password field is not present on the login page.");
+		Assert.assertTrue(login.isPasswordPresent(), "Password field is not present on the login page.");
 	}
 
 	@Test
 	public void verifyReturningCustomerTextIsPresent() {
-		Assert.assertTrue(loginPage.isReturningCustomerTextPresent(),
+		Assert.assertTrue(login.isReturningCustomerTextPresent(),
 				"Returning customer text is not present on the login page.");
 	}
 
@@ -83,7 +83,7 @@ public class LoginPageTest extends BaseTest {
 		String password = prop.getProperty("password").trim();
 
 		// Perform login and get the AccountsPage object
-		AccountsPage accountsPage = loginPage.doLogin(userName, password);
+		AccountsPage accountsPage = login.doLogin(userName, password);
 
 		// Verify Account Page title
 		String accountPageTitle = accountsPage.getAccountPageTitle();

@@ -1,67 +1,79 @@
 package com.qa.opencart.factory;
 
 import java.util.Properties;
-
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.edge.EdgeDriver;
-import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.ie.InternetExplorerOptions;
+// Uncomment and use if needed
+// import org.openqa.selenium.ie.InternetExplorerOptions; 
 
 public class OptionsManager {
 
-	private Properties prop;
-	private ChromeOptions co;
-	private FirefoxOptions fo;
-	private EdgeDriver ed;
+    private Properties prop;
+    private ChromeOptions co;
+    private FirefoxOptions fo;
+    // private InternetExplorerOptions io; // Uncomment if you need IE options
 
-	public OptionsManager(Properties prop) {
-		this.prop = prop;
+    public OptionsManager(Properties prop) {
+        this.prop = prop;
+    }
 
-	}
+    public ChromeOptions getChromeOptions() {
+        co = new ChromeOptions();
 
-	public ChromeOptions getChromeOption() {
-		co = new ChromeOptions();
+        // Set browser version if specified
+        if (prop.getProperty("browserversion") != null) {
+            co.setBrowserVersion(prop.getProperty("browserversion"));
+        }
 
-		if (Boolean.parseBoolean(prop.getProperty("remote"))) {
-			co.setCapability("enableVNC", true);
-			co.setBrowserVersion(prop.getProperty("browserversion"));
+        // Set other options
+        if (Boolean.parseBoolean(prop.getProperty("headless"))) {
+            co.setHeadless(true);
+        }
+        if (Boolean.parseBoolean(prop.getProperty("incognito"))) {
+            co.addArguments("--incognito");
+        }
 
-		}
+        // If remote is true, configure remote options accordingly (excluding deprecated capabilities)
+        if (Boolean.parseBoolean(prop.getProperty("remote"))) {
+            // No direct support for VNC in W3C WebDriver standard; set other remote capabilities if needed
+        }
 
-		if (Boolean.parseBoolean(prop.getProperty("headless")))
-			co.setHeadless(true);
-		if (Boolean.parseBoolean(prop.getProperty("incognito")))
-			co.addArguments("--incognito");
-		return co;
-	}
+        return co;
+    }
 
-	public FirefoxOptions getFirefoxOption() {
-		fo = new FirefoxOptions();
-		if (Boolean.parseBoolean(prop.getProperty("remote"))) {
-			fo.setCapability("enableVNC", true);
-			fo.setBrowserVersion(prop.getProperty("browserversion"));
+    public FirefoxOptions getFirefoxOptions() {
+        fo = new FirefoxOptions();
 
-		}
+        // Set browser version if specified
+        if (prop.getProperty("browserversion") != null) {
+            fo.setBrowserVersion(prop.getProperty("browserversion"));
+        }
 
-		if (Boolean.parseBoolean(prop.getProperty("headless")))
-			fo.setHeadless(true);
-		if (Boolean.parseBoolean(prop.getProperty("incognito")))
-			fo.addArguments("--incognito");
-		return fo;
-	}
+        // Set other options
+        if (Boolean.parseBoolean(prop.getProperty("headless"))) {
+            fo.setHeadless(true);
+        }
+        if (Boolean.parseBoolean(prop.getProperty("incognito"))) {
+            fo.addArguments("--incognito");
+        }
 
-	public EdgeOptions getEdgeOptions() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+        // If remote is true, configure remote options accordingly (excluding deprecated capabilities)
+        if (Boolean.parseBoolean(prop.getProperty("remote"))) {
+            // Set other remote capabilities if needed
+        }
 
-//	public InternetExplorerOptions getInternetOption() {
-//		io = new InternetExplorerOptions();
-//		if (Boolean.parseBoolean(prop.getProperty("headless")))
-//			io.
-//		if (Boolean.parseBoolean(prop.getProperty("incognito")))
-//			io.addArguments("--incognito");
-//		return io;
-//	}
+        return fo;
+    }
+
+    // Uncomment and use if you need Internet Explorer options
+    // public InternetExplorerOptions getInternetOptions() {
+    //     io = new InternetExplorerOptions();
+    //     if (Boolean.parseBoolean(prop.getProperty("headless"))) {
+    //         io.setHeadless(true); // Internet Explorer does not support headless mode
+    //     }
+    //     if (Boolean.parseBoolean(prop.getProperty("incognito"))) {
+    //         io.addArguments("--incognito"); // IE does not support incognito mode through WebDriver
+    //     }
+    //     return io;
+    // }
 }
