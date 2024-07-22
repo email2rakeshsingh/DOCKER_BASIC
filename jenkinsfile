@@ -1,66 +1,167 @@
-pipeline{
-    
+pipeline {
     agent any
-    
-    stages{
-        
-        stage("build"){
-            steps{
-                echo("build the project")
-            }
-        }
-        
-        stage("Run Unit test"){
-            steps{
-                echo("run UTs")
-            }
-        }
-        
-        stage("Run Integration test"){
-            steps{
-                echo("run ITs")
-            }
-        }
-        
-        stage("Deploy to dev"){
-            steps{
-                echo("deploy to dev")
-            }
-        }
-        
-        stage("Deploy to QA"){
-            steps{
-                echo("deploy to QA")
-            }
-        }
-        
-        stage("Run regression test cases on QA"){
-            steps{
-                echo("Run test cases on QA")
-            }
-        }
-        
-        stage("Deploy to stage"){
-            steps{
-                echo("deploy to stage")
-            }
-        }
-        
-         stage("Run sanity test cases on Stage"){
-            steps{
-                echo("Run sanity test cases on Stage")
-            }
-        }
-        
-        stage("Deploy to PROD"){
-            steps{
-                echo("deploy to PROD")
-            }
-        }
-        
-        
-        
+
+    tools {
+        maven 'maven'
     }
-    
-    
+
+    environment {
+        SANITY_TESTS_RAN = 'false'
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                git 'https://github.com/jglick/simple-maven-project-with-tests.git'
+                sh "mvn -Dmaven.test.failure.ignore=true clean package"
+            }
+            post {
+                success {
+                    junit '**/target/surefire-reports/TEST-*.xml'
+                    archiveArtifacts 'target/*.jar'
+                }
+                failure {
+                    script {
+                        currentBuild.result = 'FAILURE'
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Dev') {
+            when {
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+            }
+            steps {
+                echo "Deploying to Dev"
+            }
+            post {
+                failure {
+                    script {
+                        currentBuild.result = 'FAILURE'
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to QA') {
+            when {
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+            }
+            steps {
+                echo "Deploying to QA"
+            }
+            post {
+                failure {
+                    script {
+                        currentBuild.result = 'FAILURE'
+                    }
+                }
+            }
+        }
+
+        stage('Run Regression Automation Tests') {
+            when {
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+            }
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    git 'https://github.com/email2rakeshsingh/DOCKER_BASIC'
+                    sh "mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testrunners/test_regression.xml"
+                }
+            }
+            post {
+                failure {
+                    script {
+                        currentBuild.result = 'FAILURE'
+                    }
+                }
+            }
+        }
+
+        stage('Publish Allure Reports') {
+            steps {
+                script {
+                    allure([
+                        includeProperties: false,
+                        jdk: '',
+                        properties: [],
+                        reportBuildPolicy: 'ALWAYS',
+                        results: [[path: 'allure-results']]
+                    ])
+                }
+            }
+        }
+
+        stage('Publish Extent Report') {
+            steps {
+                publishHTML([allowMissing: false,
+                    alwaysLinkToLastBuild: false,
+                    keepAll: true,
+                    reportDir: 'build	',
+                    reportFiles: 'TestExecutionReport.html',
+                    reportName: 'HTML Regression Extent Report',
+                    reportTitles: ''])
+            }
+        }
+
+        stage('Deploy to Stage') {
+            when {
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+            }
+            steps {
+                echo "Deploying to Stage"
+            }
+            post {
+                failure {
+                    script {
+                        currentBuild.result = 'FAILURE'
+                    }
+                }
+            }
+        }
+
+        stage('Run Sanity Automation Tests') {
+            when {
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+            }
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    git 'https://github.com/naveenanimation20/Feb2024POMSeries.git'
+                    sh "mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testrunners/test_sanity.xml"
+                }
+                script {
+                    env.SANITY_TESTS_RAN = 'true'
+                }
+            }
+            post {
+                failure {
+                    script {
+                        currentBuild.result = 'FAILURE'
+                    }
+                }
+            }
+        }
+
+        stage('Publish Sanity Extent Report') {
+            when {
+                expression { env.SANITY_TESTS_RAN == 'true' }
+            }
+            steps {
+                publishHTML([allowMissing: false,
+                    alwaysLinkToLastBuild: false,
+                    keepAll: true,
+                    reportDir: 'reports',
+                    reportFiles: 'TestExecutionReport.html',
+                    reportName: 'HTML Sanity Extent Report',
+                    reportTitles: ''])
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+    }
 }
