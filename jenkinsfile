@@ -67,7 +67,7 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     git 'https://github.com/email2rakeshsingh/DOCKER_BASIC.git'
-                    sh "mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testrunners/test_regression.xml"
+                    sh "mvn clean install"
                 }
             }
             post {
