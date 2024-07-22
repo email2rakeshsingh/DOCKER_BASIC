@@ -6,34 +6,6 @@
     <listener class-name="com.qa.opencart.listeners.TestAllureListener"/>
     <listener class-name="com.qa.opencart.listeners.AnnotationTransformer"/>
   </listeners>
-  <test thread-count="4" parallel="tests" name="Open Cart Product Info Test - Chrome 89(failed)" verbose="4">
-    <parameter name="browser" value="chrome"/>
-    <parameter name="browserversion" value="89.0"/>
-    <classes>
-      <class name="com.qa.opencart.tests.RegisterTest">
-        <methods>
-          <include name="setup"/>
-          <include name="userRegisterTest" invocation-numbers="2 2 2 2 3 3"/>
-          <include name="teardown"/>
-          <include name="regSetup"/>
-        </methods>
-      </class> <!-- com.qa.opencart.tests.RegisterTest -->
-    </classes>
-  </test> <!-- Open Cart Product Info Test - Chrome 89(failed) -->
-  <test thread-count="4" parallel="tests" name="Open Cart Login Page Test - Chrome 100(failed)" verbose="4">
-    <parameter name="browser" value="chrome"/>
-    <parameter name="browserversion" value="100.0"/>
-    <classes>
-      <class name="com.qa.opencart.tests.LoginPageTest">
-        <methods>
-          <include name="verifyFailTest"/>
-          <include name="verifyLoginPageTitle"/>
-          <include name="setup"/>
-          <include name="teardown"/>
-        </methods>
-      </class> <!-- com.qa.opencart.tests.LoginPageTest -->
-    </classes>
-  </test> <!-- Open Cart Login Page Test - Chrome 100(failed) -->
   <test thread-count="4" parallel="tests" name="Open Cart Login Page Test - Chrome 90(failed)" verbose="4">
     <parameter name="browser" value="chrome"/>
     <parameter name="browserversion" value="90.0"/>
@@ -48,4 +20,32 @@
       </class> <!-- com.qa.opencart.tests.LoginPageTest -->
     </classes>
   </test> <!-- Open Cart Login Page Test - Chrome 90(failed) -->
+  <test thread-count="4" parallel="tests" name="Open Cart Login Page Test - Chrome 100(failed)" verbose="4">
+    <parameter name="browser" value="chrome"/>
+    <parameter name="browserversion" value="100.0"/>
+    <classes>
+      <class name="com.qa.opencart.tests.LoginPageTest">
+        <methods>
+          <include name="verifyFailTest"/>
+          <include name="verifyLoginPageTitle"/>
+          <include name="setup"/>
+          <include name="teardown"/>
+        </methods>
+      </class> <!-- com.qa.opencart.tests.LoginPageTest -->
+    </classes>
+  </test> <!-- Open Cart Login Page Test - Chrome 100(failed) -->
+  <test thread-count="4" parallel="tests" name="Open Cart Product Info Test - Chrome 89(failed)" verbose="4">
+    <parameter name="browser" value="chrome"/>
+    <parameter name="browserversion" value="89.0"/>
+    <classes>
+      <class name="com.qa.opencart.tests.RegisterTest">
+        <methods>
+          <include name="setup"/>
+          <include name="userRegisterTest" invocation-numbers="0 0 0 0 1 1 2 2 3 3"/>
+          <include name="teardown"/>
+          <include name="regSetup"/>
+        </methods>
+      </class> <!-- com.qa.opencart.tests.RegisterTest -->
+    </classes>
+  </test> <!-- Open Cart Product Info Test - Chrome 89(failed) -->
 </suite> <!-- Failed suite [Open Cart Test Regression Suite] -->
