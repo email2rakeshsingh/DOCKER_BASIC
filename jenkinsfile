@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        SANITY_TESTS_RAN = 'false'
+        SANITY_TESTS_RAN = false
     }
 
     stages {
@@ -33,7 +33,7 @@ pipeline {
                 expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
             }
             steps {
-                echo "Deploying to Dev"
+                echo "deploy to Dev"
             }
             post {
                 failure {
@@ -49,7 +49,7 @@ pipeline {
                 expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
             }
             steps {
-                echo "Deploying to QA"
+                echo "deploy to QA"
             }
             post {
                 failure {
@@ -66,8 +66,8 @@ pipeline {
             }
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    git 'https://github.com/email2rakeshsingh/DOCKER_BASIC'
-                    sh "mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testrunners/test_regression.xml"
+                    git 'https://github.com/email2rakeshsingh/DOCKER_BASIC.git'
+                    sh "mvn clean install"
                 }
             }
             post {
@@ -87,7 +87,7 @@ pipeline {
                         jdk: '',
                         properties: [],
                         reportBuildPolicy: 'ALWAYS',
-                        results: [[path: 'allure-results']]
+                        results: [[path: '/allure-results']]
                     ])
                 }
             }
@@ -95,73 +95,22 @@ pipeline {
 
         stage('Publish Extent Report') {
             steps {
-                publishHTML([allowMissing: false,
+                publishHTML([
+                    allowMissing: false,
                     alwaysLinkToLastBuild: false,
                     keepAll: true,
-                    reportDir: 'build	',
+                    reportDir: 'build',
                     reportFiles: 'TestExecutionReport.html',
                     reportName: 'HTML Regression Extent Report',
-                    reportTitles: ''])
+                    reportTitles: ''
+                ])
             }
         }
 
         stage('Deploy to Stage') {
-            when {
-                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
-            }
             steps {
-                echo "Deploying to Stage"
+                echo "deploy to Stage"
             }
-            post {
-                failure {
-                    script {
-                        currentBuild.result = 'FAILURE'
-                    }
-                }
-            }
-        }
-
-        stage('Run Sanity Automation Tests') {
-            when {
-                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
-            }
-            steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    git 'https://github.com/naveenanimation20/Feb2024POMSeries.git'
-                    sh "mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testrunners/test_sanity.xml"
-                }
-                script {
-                    env.SANITY_TESTS_RAN = 'true'
-                }
-            }
-            post {
-                failure {
-                    script {
-                        currentBuild.result = 'FAILURE'
-                    }
-                }
-            }
-        }
-
-        stage('Publish Sanity Extent Report') {
-            when {
-                expression { env.SANITY_TESTS_RAN == 'true' }
-            }
-            steps {
-                publishHTML([allowMissing: false,
-                    alwaysLinkToLastBuild: false,
-                    keepAll: true,
-                    reportDir: 'reports',
-                    reportFiles: 'TestExecutionReport.html',
-                    reportName: 'HTML Sanity Extent Report',
-                    reportTitles: ''])
-            }
-        }
-    }
-
-    post {
-        always {
-            cleanWs()
         }
     }
 }
