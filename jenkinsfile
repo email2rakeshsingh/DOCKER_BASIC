@@ -1,87 +1,106 @@
-pipeline {
+pipeline 
+{
     agent any
+    
+    tools{
+    	maven'maven'
+        }
 
-    tools {
-        maven 'maven'
-    }
-
-    stages {
-        stage('Checkout') {
-            steps {
-                script {
-                    // Checkout the repository for the build stage
-                    git 'https://github.com/jglick/simple-maven-project-with-tests.git'
+    stages 
+    {
+        stage('Build') 
+        {
+            steps
+            {
+               git 'https://github.com/jglick/simple-maven-project-with-tests.git'sh"mvn-Dmaven.test.failure.ignore=true clean package"
+            }
+            post 
+            {
+                success
+                {
+                    junit '**/target/surefire-reports/TEST-*.xml'archiveArtifacts 'target/*.jar'
                 }
             }
         }
-
-        stage('Build') {
-            steps {
-                sh "mvn -Dmaven.test.failure.ignore=true clean package"
-            }
-            post {
-                success {
-                    junit '**/target/surefire-reports/TEST-*.xml'
-                    archiveArtifacts 'target/*.jar'
-                }
+        
+        
+        
+        stage("Deploy to QA"){
+            steps{
+                echo("deploy to qa")
             }
         }
-
-        stage('Deploy to QA') {
-            steps {
-                echo 'Deploying to QA'
-            }
-        }
-
+        
+        
+                
         stage('Regression Automation Test') {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    script {
-                        // Ensure that this git repository is correct for this stage
-                        git 'https://github.com/email2rakeshsingh/DOCKER_BASIC.git'
-                        sh "mvn clean install"
-                    }
+                    git 'https://github.com/email2rakeshsingh/DOCKER_BASIC.git'
+                    sh "mvn clean test -Dsurefire.suiteXmlFiles=/src/test/resources/testrunners/testng_regression.xml"
+                    
                 }
             }
         }
-
+                
+     
         stage('Publish Allure Reports') {
-            steps {
+           steps {
                 script {
                     allure([
                         includeProperties: false,
                         jdk: '',
                         properties: [],
                         reportBuildPolicy: 'ALWAYS',
-                        results: [[path: 'allure-results']]
+                        results: [[path: '/allure-results']]
                     ])
                 }
             }
         }
-
-        stage('Publish Extent Report') {
-            steps {
-                publishHTML([
-                    allowMissing: false,
-                    alwaysLinkToLastBuild: false,
-                    keepAll: false,
-                    reportDir: 'build',
-                    reportFiles: 'TestExecutionReport.html',
-                    reportName: 'HTML Extent Report',
-                    reportTitles: ''
-                ])
+        
+        
+        stage('Publish Extent Report'){
+            steps{
+                     publishHTML([allowMissing: false,
+                                  alwaysLinkToLastBuild: false, 
+                                  keepAll: true, 
+                                  reportDir: 'reports', 
+                                  reportFiles: 'TestExecutionReport.html', 
+                                  reportName: 'HTML Regression Extent Report', 
+                                  reportTitles: ''])
             }
         }
-
-        stage('Deploy to PROD') {
-            steps {
-                echo 'Deploying to PROD'
+        
+        stage("Deploy to Stage"){
+            steps{
+                echo("deploy to Stage")
             }
         }
-    }
-
-    // Ensure all steps are executed in the right context
-    environment {
-        PATH = "${tool 'maven'}/bin:${env.PATH}"
+        
+        stage('Sanity Automation Test') {
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    git 'https://github.com/naveenanimation20/Nov2022POMSeriesCode.git'
+                    sh "mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testrunners/testng_sanity.xml"
+                    
+                }
+            }
+        }
+        
+        
+        
+        stage('Publish sanity Extent Report'){
+            steps{
+                     publishHTML([allowMissing: false,
+                                  alwaysLinkToLastBuild: false, 
+                                  keepAll: true, 
+                                  reportDir: 'reports', 
+                                  reportFiles: 'TestExecutionReport.html', 
+                                  reportName: 'HTML Sanity Extent Report', 
+                                  reportTitles: ''])
+            }
+        }
+        
+        
     }
 }
