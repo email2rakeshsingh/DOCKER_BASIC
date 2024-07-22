@@ -13,7 +13,14 @@ pipeline {
         stage('Build') {
             steps {
                 git 'https://github.com/jglick/simple-maven-project-with-tests.git'
-                sh "mvn -Dmaven.test.failure.ignore=true clean package"
+                script {
+                    def isWindows = isUnix() ? false : true
+                    if (isWindows) {
+                        bat "mvn -Dmaven.test.failure.ignore=true clean package"
+                    } else {
+                        sh "mvn -Dmaven.test.failure.ignore=true clean package"
+                    }
+                }
             }
             post {
                 success {
@@ -67,7 +74,14 @@ pipeline {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     git 'https://github.com/email2rakeshsingh/DOCKER_BASIC.git'
-                    sh "mvn clean install"
+                    script {
+                        def isWindows = isUnix() ? false : true
+                        if (isWindows) {
+                            bat "mvn clean install"
+                        } else {
+                            sh "mvn clean install"
+                        }
+                    }
                 }
             }
             post {
