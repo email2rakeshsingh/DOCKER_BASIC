@@ -26,11 +26,7 @@
 		</snapshotRepository>
 	</distributionManagement>
 
-<dependency>
-    <groupId>org.glassfish.corba</groupId>
-    <artifactId>corba</artifactId>
-    <version>3.0.0</version>
-</dependency>
+
 	<dependencies>
 
 
